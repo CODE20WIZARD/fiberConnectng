@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiberConnect | Premium Optical Network Terminals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            scroll-behavior: smooth;
+        }
+
+        /* E5 Yellow Highlight Style */
+        .highlight-yellow {
+            background-color: #fde047; /* Tailwind yellow-300 */
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            display: inline;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        /* Red Pre-headline */
+        .pre-headline {
+            color: #dc2626; /* Tailwind red-600 */
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* Product Badge */
+        .original-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 800;
+            border-radius: 50px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            z-index: 10;
+            border: 2px solid #fff;
+            transform: rotate(3deg);
+        }
+
+        /* Lightbox Styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.95);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-img {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            object-fit: contain;
+        }
+
+        .lightbox-controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 2rem;
+            transform: translateY(-50%);
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .lightbox-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: background-color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-btn:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        .close-lightbox {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            z-index: 101;
+            transition: color 0.2s;
+        }
+
+        .close-lightbox:hover {
+            color: #ef4444;
+        }
+
+        /* Thumbnails */
+        .thumb-grid img {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+            border: 2px solid transparent;
+            object-fit: cover;
+            aspect-ratio: 4/3;
+        }
+        
+        .thumb-grid img:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-color: #3b82f6;
+        }
+
+        /* Accordion Styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+        }
+
+        .accordion-content.open {
+            max-height: 500px;
+            padding-bottom: 1rem;
+            padding-top: 1rem;
+        }
+        
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-button[aria-expanded="true"] .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.2s;
+            text-decoration: none;
+        }
+        
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            background-color: #1ebe57;
+            color: white;
+        }
+
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header / Nav -->
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="text-2xl font-extrabold text-blue-900 tracking-tighter">
+                FIBER<span class="text-orange-500">CONNECT</span>
+            </div>
+            <a href="https://wa.me/2348141002160" target="_blank" class="text-sm font-semibold text-slate-600 hover:text-blue-600 flex items-center gap-2">
+                <i class="fab fa-whatsapp text-green-500 text-lg"></i> 0814 100 2160
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION (E5 Hook) -->
+    <header class="bg-slate-50 pt-16 pb-12 px-4 text-center border-b border-slate-200">
+        <div class="max-w-4xl mx-auto">
+            <p class="pre-headline text-sm md:text-base mb-4">
+                ATTENTION: ISP PROVIDERS, NETWORK ENGINEERS, AND SMART HOMEOWNERS
+            </p>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 text-slate-900">
+                <span class="highlight-yellow">The Secret To Unbreakable, Lightning-Fast Fiber Broadband Is Finally Here...</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-600 font-medium mb-8 max-w-3xl mx-auto leading-relaxed">
+                Discover the exact hardware top-tier networks use to eliminate dead zones, stop buffering forever, and deliver crystal-clear voice and data—without the outrageous price tag.
+            </p>
+        </div>
+    </header>
+
+    <!-- LONG FORM SALES COPY INTRO -->
+    <section class="py-12 px-4 bg-white">
+        <div class="max-w-3xl mx-auto text-lg md:text-xl leading-relaxed text-slate-700 space-y-6">
+            <p class="font-bold text-slate-900">Dear Friend,</p>
+            
+            <p>If you're sick and tired of dropping connections, sluggish speeds, and hardware that just can't keep up with modern broadband demands, then this will be the most important page you ever read.</p>
+            
+            <p>Here is the undeniable truth about most network terminals on the market today: <strong>They are built to fail.</strong> They overheat, drop packets, and throttle your bandwidth right when you need it most.</p>
+            
+            <p>Worse yet, the market is currently flooded with cheap fakes, refurbished knock-offs, and "grey market" units masquerading as premium devices. These counterfeits look identical on the outside but contain substandard internal chips that burn out within months, leaving you completely disconnected.</p>
+            
+            <p>You’ve probably seen the heavily-marketed mainstream brands. They charge you a fortune just for the logo stamped on the plastic, while delivering mediocre, unstable performance.</p>
+            
+            <div class="border-l-4 border-orange-500 pl-6 py-2 my-8 bg-orange-50 rounded-r-lg">
+                <p class="font-semibold text-slate-900">But today, that changes. I want to introduce you to the ultimate solution for fiber broadband access...</p>
+            </div>
+            
+            <p>At <strong>FiberConnect</strong>, we do things differently. We are <strong>Direct Partners</strong> with the manufacturers. That means we cut out the middlemen and the counterfeiters. We sell 100% original, genuine, factory-fresh hardware.</p>
+            
+            <p>These units are far more effective, exponentially more reliable, and significantly less expensive than the other popular brands out there. You get enterprise-grade stability at a price that actually makes sense.</p>
+        </div>
+    </section>
+
+    <!-- PRODUCT SHOWCASE SECTION -->
+    <section class="py-16 px-4 bg-slate-100" id="hardware">
+        <div class="max-w-6xl mx-auto">
+            
+            <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-16 text-slate-900">Choose Your Optical Network Terminal</h2>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                
+                <!-- PRODUCT 1: VSOL V2804N-Z -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 flex flex-col relative">
+                    <!-- Badge -->
+                    <div class="original-badge">
+                        <i class="fas fa-check-circle mr-1"></i> 100% ORIGINAL - DIRECT PARTNER
+                    </div>
+                    
+                    <div class="p-8 flex-grow">
+                        <h3 class="text-3xl font-extrabold text-slate-900 mb-1">The VSOL V2804N-Z</h3>
+                        <p class="text-blue-600 font-bold mb-6 text-lg tracking-wide">(4-Gigabit Wi-Fi 4 HGU)</p>
+                        
+                        <!-- Image Gallery Grid -->
+                        <div class="thumb-grid grid grid-cols-2 gap-3 mb-8">
+                            <img src="V2804N-Z.jpg" alt="VSOL V2804N-Z Angle" class="w-full rounded-lg bg-slate-50" onclick="openLightbox('vsol', 0)">
+                            <img src="V2804N-Z back.webp" alt="VSOL V2804N-Z Back Ports" class="w-full rounded-lg bg-slate-50" onclick="openLightbox('vsol', 1)">
+                            <img src="V2804N-Z side R.webp" alt="VSOL V2804N-Z Side View" class="w-full rounded-lg bg-slate-50" onclick="openLightbox('vsol', 2)">
+                            <img src="V2804N-Z.jpeg" alt="VSOL V2804N-Z In Box" class="w-full rounded-lg bg-slate-50" onclick="openLightbox('vsol', 3)">
+                        </div>
+                        <p class="text-center text-xs text-slate-400 mb-6 uppercase tracking-wider font-semibold"><i class="fas fa-search-plus"></i> Click images to zoom</p>
+
+                        <!-- Copy & Features -->
+                        <div class="text-slate-700 space-y-4 mb-8">
+                            <p class="font-medium text-lg">This is not just a terminal. This is a fortress for your data.</p>
+                            <p>Designed specifically for fiber broadband access, the VSOL V2804N-Z delivers pure, unadulterated speed directly to your devices.</p>
+                            
+                            <div class="bg-slate-50 p-5 rounded-lg border border-slate-100 mt-6">
+                                <h4 class="font-bold text-slate-900 mb-3 uppercase tracking-wide text-sm border-b pb-2">What's In The Box?</h4>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start"><i class="fas fa-box-open text-orange-500 mt-1 mr-3 w-4"></i> <span>1 x VSOL V2804N-Z HGU Unit</span></li>
+                                    <li class="flex items-start"><i class="fas fa-plug text-orange-500 mt-1 mr-3 w-4"></i> <span>1 x Premium Plug Charger / Power Adapter</span></li>
+                                    <li class="flex items-start"><i class="fas fa-book text-orange-500 mt-1 mr-3 w-4"></i> <span>1 x Quick Installation Guide</span></li>
+                                    <li class="flex items-start"><i class="fas fa-network-wired text-orange-500 mt-1 mr-3 w-4"></i> <span>1 x High-Speed Ethernet Cable</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8 bg-slate-900 text-center rounded-b-2xl">
+                        <div class="text-white mb-4">
+                            <span class="text-sm font-medium uppercase tracking-wider text-slate-400">Direct Partner Price</span><br>
+                            <span class="text-4xl font-extrabold text-yellow-400">₦32,000</span>
+                        </div>
+                        <a href="https://wa.me/2348141002160?text=Hello%20FiberConnect!%20I%20want%20to%20order%20the%20VSOL%20V2804N-Z%20for%20%E2%82%A632%2C000." target="_blank" class="block w-full bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-lg py-4 px-6 rounded-lg shadow-lg transform transition hover:scale-105 active:scale-95">
+                            Yes, I Want The VSOL V2804N-Z For ₦32,000
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PRODUCT 2: BD-ONT-414WL -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 flex flex-col relative">
+                    <!-- Badge -->
+                    <div class="original-badge">
+                        <i class="fas fa-check-circle mr-1"></i> 100% ORIGINAL - DIRECT PARTNER
+                    </div>
+                    
+                    <div class="p-8 flex-grow">
+                        <h3 class="text-3xl font-extrabold text-slate-900 mb-1">The BD-ONT-414WL</h3>
+                        <p class="text-blue-600 font-bold mb-6 text-lg tracking-wide">(Dual-Mode XPON ONT)</p>
+                        
+                        <!-- Image Gallery Grid -->
+                        <div class="thumb-grid grid grid-cols-2 gap-3 mb-8">
+                            <img src="BD-ONT-414WL.jpeg" alt="BD-ONT-414WL Box Open" class="w-full h-full object-cover rounded-lg bg-slate-50" onclick="openLightbox('bd', 0)">
+                            <img src="BD-ONT-414WL 2.webp" alt="BD-ONT-414WL Rear Ports" class="w-full h-full object-cover rounded-lg bg-slate-50" onclick="openLightbox('bd', 1)">
+                        </div>
+                        <p class="text-center text-xs text-slate-400 mb-6 uppercase tracking-wider font-semibold"><i class="fas fa-search-plus"></i> Click images to zoom</p>
+
+                        <!-- Copy & Features -->
+                        <div class="text-slate-700 space-y-4 mb-8">
+                            <p class="font-medium text-lg">Need ultimate versatility? The BD-ONT-414WL is a dual-mode beast.</p>
+                            <p>It comes fully equipped with 1 XPON uplink port (SC/UPC), 4 Ethernet adaptive ports (1x Gigabit, 3x Fast Ethernet), and a dedicated POTS (RJ11) telephone interface.</p>
+                            
+                            <div class="bg-slate-50 p-5 rounded-lg border border-slate-100 mt-6">
+                                <h4 class="font-bold text-slate-900 mb-3 uppercase tracking-wide text-sm border-b pb-2">What's In The Box?</h4>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start"><i class="fas fa-box-open text-orange-500 mt-1 mr-3 w-4"></i> <span>1 x BD-ONT-414WL XPON Unit</span></li>
+                                    <li class="flex items-start"><i class="fas fa-plug text-orange-500 mt-1 mr-3 w-4"></i> <span>1 x Heavy-Duty Power Adapter</span></li>
+                                    <li class="flex items-start"><i class="fas fa-shield-alt text-orange-500 mt-1 mr-3 w-4"></i> <span>1 x SC/UPC Fiber Connector Cover</span></li>
+                                    <li class="flex items-start"><i class="fas fa-book text-orange-500 mt-1 mr-3 w-4"></i> <span>1 x User Manual</span></li>
+                                    <li class="flex items-start"><i class="fas fa-network-wired text-orange-500 mt-1 mr-3 w-4"></i> <span>1 x RJ45 Network Cable</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8 bg-slate-900 text-center rounded-b-2xl">
+                        <div class="text-white mb-4">
+                            <span class="text-sm font-medium uppercase tracking-wider text-slate-400">Direct Partner Price</span><br>
+                            <span class="text-4xl font-extrabold text-yellow-400">₦30,000</span>
+                        </div>
+                        <a href="https://wa.me/2348141002160?text=Hello%20FiberConnect!%20I%20want%20to%20order%20the%20BD-ONT-414WL%20for%20%E2%82%A630%2C000." target="_blank" class="block w-full bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-lg py-4 px-6 rounded-lg shadow-lg transform transition hover:scale-105 active:scale-95">
+                            Yes, I Want The BD-ONT-414WL For ₦30,000
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE FAQ ACCORDION -->
+    <section class="py-20 px-4 bg-white">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4">Frequently Asked Questions</h2>
+                <p class="text-slate-600">Everything you need to know before securing your hardware.</p>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- FAQ 1 -->
+                <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                    <button class="accordion-button w-full px-6 py-5 text-left font-bold flex justify-between items-center focus:outline-none hover:bg-slate-50 transition" aria-expanded="false" onclick="toggleAccordion(this)">
+                        <span class="text-slate-800 text-lg">1. How do I know these are not fakes?</span>
+                        <svg class="w-6 h-6 accordion-icon text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="accordion-content px-6 bg-slate-50 text-slate-700 border-t border-slate-100">
+                        <p>Because FiberConnect is a certified Direct Partner with the manufacturers. We import directly from the factory, entirely bypassing the grey market. Every unit we sell comes in its original, sealed packaging with verifiable factory serial numbers.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                    <button class="accordion-button w-full px-6 py-5 text-left font-bold flex justify-between items-center focus:outline-none hover:bg-slate-50 transition" aria-expanded="false" onclick="toggleAccordion(this)">
+                        <span class="text-slate-800 text-lg">2. Are they difficult to install?</span>
+                        <svg class="w-6 h-6 accordion-icon text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="accordion-content px-6 bg-slate-50 text-slate-700 border-t border-slate-100">
+                        <p>Not at all. Both terminals utilize standard web GUI configurations that any network engineer or ISP technician is familiar with. They are designed for rapid deployment and easy provisioning.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                    <button class="accordion-button w-full px-6 py-5 text-left font-bold flex justify-between items-center focus:outline-none hover:bg-slate-50 transition" aria-expanded="false" onclick="toggleAccordion(this)">
+                        <span class="text-slate-800 text-lg">3. Do they work with any ISP network?</span>
+                        <svg class="w-6 h-6 accordion-icon text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="accordion-content px-6 bg-slate-50 text-slate-700 border-t border-slate-100">
+                        <p>Yes, provided your ISP allows bring-your-own-device (BYOD) configurations and does not hardware-lock their OLTs. The BD-ONT-414WL is exceptionally versatile as a Dual-Mode XPON ONT, meaning it adapts to both EPON and GPON networks automatically.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ 4 -->
+                <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                    <button class="accordion-button w-full px-6 py-5 text-left font-bold flex justify-between items-center focus:outline-none hover:bg-slate-50 transition" aria-expanded="false" onclick="toggleAccordion(this)">
+                        <span class="text-slate-800 text-lg">4. What is the warranty?</span>
+                        <svg class="w-6 h-6 accordion-icon text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="accordion-content px-6 bg-slate-50 text-slate-700 border-t border-slate-100">
+                        <p>Because we sell 100% original hardware, every terminal is backed by a full manufacturer's warranty against factory defects. We stand entirely behind the quality of the devices we sell.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-10 text-center text-sm border-t-4 border-blue-900">
+        <div class="text-2xl font-extrabold text-white tracking-tighter mb-4 opacity-50">
+            FIBER<span class="text-orange-500">CONNECT</span>
+        </div>
+        <p class="mb-2">&copy; 2026 FiberConnect. All Rights Reserved.</p>
+        <p>Direct Partners for Premium Optical Network Hardware</p>
+    </footer>
+
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/2348141002160" target="_blank" class="whatsapp-float pulse" aria-label="Chat with us on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="imageLightbox" class="lightbox">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        
+        <div class="lightbox-controls">
+            <button class="lightbox-btn" onclick="prevImage()"><i class="fas fa-chevron-left"></i></button>
+            <button class="lightbox-btn" onclick="nextImage()"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <img id="lightboxImage" class="lightbox-img" src="" alt="Zoomed Product Image">
+    </div>
+
+    <!-- JAVASCRIPT FOR INTERACTIVITY -->
+    <script>
+        // --- PRODUCT IMAGE GALLERY DATA ---
+        const galleryData = {
+            'vsol': [
+                'V2804N-Z.jpg',
+                'V2804N-Z back.webp',
+                'V2804N-Z side R.webp',
+                'V2804N-Z.jpeg'
+            ],
+            'bd': [
+                'BD-ONT-414WL.jpeg',
+                'BD-ONT-414WL 2.webp'
+            ]
+        };
+
+        // --- LIGHTBOX LOGIC ---
+        let currentLightboxProduct = '';
+        let currentLightboxIndex = 0;
+        const lightbox = document.getElementById('imageLightbox');
+        const lightboxImg = document.getElementById('lightboxImage');
+
+        function openLightbox(productId, index) {
+            currentLightboxProduct = productId;
+            currentLightboxIndex = index;
+            updateLightboxContent();
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        function nextImage() {
+            const arrLength = galleryData[currentLightboxProduct].length;
+            currentLightboxIndex = (currentLightboxIndex + 1) % arrLength;
+            updateLightboxContent();
+        }
+
+        function prevImage() {
+            const arrLength = galleryData[currentLightboxProduct].length;
+            currentLightboxIndex = (currentLightboxIndex - 1 + arrLength) % arrLength;
+            updateLightboxContent();
+        }
+
+        function updateLightboxContent() {
+            const imgSrc = galleryData[currentLightboxProduct][currentLightboxIndex];
+            
+            // Fade effect
+            lightboxImg.style.opacity = 0.5;
+            
+            setTimeout(() => {
+                lightboxImg.src = imgSrc;
+                lightboxImg.style.opacity = 1;
+            }, 100);
+        }
+
+        // Close lightbox on clicking outside the image
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Keyboard navigation for lightbox
+        document.addEventListener('keydown', function(e) {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'ArrowLeft') prevImage();
+        });
+
+        // --- ACCORDION LOGIC ---
+        function toggleAccordion(button) {
+            const isExpanded = button.getAttribute('aria-expanded') === 'true';
+            const content = button.nextElementSibling;
+            
+            // Close all others
+            const allButtons = document.querySelectorAll('.accordion-button');
+            const allContents = document.querySelectorAll('.accordion-content');
+            
+            allButtons.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
+            allContents.forEach(cont => cont.classList.remove('open'));
+
+            // Toggle current
+            if (!isExpanded) {
+                button.setAttribute('aria-expanded', 'true');
+                content.classList.add('open');
+            }
+        }
+    </script>
+</body>
+</html>
